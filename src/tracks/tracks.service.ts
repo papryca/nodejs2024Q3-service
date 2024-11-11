@@ -1,11 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { Track } from './entities/track.entity';
 @Injectable()
 export class TracksService {
-  private readonly logger = new Logger('test');
   private tracks = [];
   create(createTrackDto: CreateTrackDto) {
     const newTrack = { id: uuidv4(), ...createTrackDto };
