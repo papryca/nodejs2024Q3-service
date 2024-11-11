@@ -2,6 +2,7 @@ import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateTrackDto {
   @IsUUID()
+  @IsOptional()
   id: string;
 
   @IsString()

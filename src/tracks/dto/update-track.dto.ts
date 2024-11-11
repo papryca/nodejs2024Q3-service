@@ -4,8 +4,7 @@ import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class UpdateTrackDto extends PartialType(CreateTrackDto) {
   @IsUUID()
-  @IsOptional()
-  id?: string;
+  id: string;
 
   @IsString()
   @IsOptional()

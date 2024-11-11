@@ -3,40 +3,85 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpCode,
+  BadRequestException,
+  ParseUUIDPipe,
+  NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
-@Controller('tracks')
+@Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    if (!createTrackDto) {
+      throw new BadRequestException(
+        'Request body must contain required fields',
+      );
+    }
     return this.tracksService.create(createTrackDto);
   }
 
   @Get()
-  findAll() {
+  @HttpCode(HttpStatus.OK)
+  async findAll() {
     return this.tracksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tracksService.findOne(+id);
+  @HttpCode(HttpStatus.OK)
+  async findOne(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    id: string,
+  ) {
+    const track = await this.tracksService.findOne(id);
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+    return track;
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    return this.tracksService.update(+id, updateTrackDto);
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
+    const track = await this.tracksService.findOne(id);
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+    return this.tracksService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tracksService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    id: string,
+  ) {
+    const track = await this.tracksService.findOne(id);
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+    await this.tracksService.remove(id);
   }
 }
