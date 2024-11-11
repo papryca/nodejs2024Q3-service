@@ -4,8 +4,7 @@ import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsUUID()
-  @IsOptional()
-  id?: string;
+  id: string;
 
   @IsString()
   @IsOptional()
@@ -29,4 +28,11 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @Min(0)
   @IsOptional()
   updatedAt?: number;
+}
+export class UpdatePasswordDto {
+  @IsString()
+  oldPassword: string;
+
+  @IsString()
+  newPassword: string;
 }
