@@ -4,7 +4,6 @@ import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateArtistDto extends PartialType(CreateArtistDto) {
   @IsUUID()
-  @IsOptional()
   id: string;
 
   @IsString()
