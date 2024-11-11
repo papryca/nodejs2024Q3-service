@@ -10,7 +10,6 @@ export class FavoritesService {
     albums: [] as string[],
     tracks: [] as string[],
   };
-  private readonly logger = new Logger('test');
   constructor(
     private readonly artistService: ArtistService,
     private readonly albumService: AlbumService,
