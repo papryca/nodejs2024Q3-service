@@ -63,7 +63,7 @@ export class UsersController {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    const isPasswordUpdated = this.usersService.updatePassword(
+    const isPasswordUpdated = await this.usersService.updatePassword(
       id,
       updatePasswordDto,
     );
@@ -71,10 +71,10 @@ export class UsersController {
       throw new ForbiddenException(`Incorrect old password`);
     }
 
-    const u = await this.usersService.findOne(id);
-    const response = { ...u };
-    delete response.password;
-    return response;
+    return await this.usersService.findOne(id);
+    // const response = { ...u };
+    // delete response.password;
+    // return response;
   }
 
   @Delete(':id')

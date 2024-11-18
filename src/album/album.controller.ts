@@ -81,7 +81,7 @@ export class AlbumController {
     if (!album) {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
-    this.albumService.remove(id);
-    this.tracksService.clearAlbum(id);
+    await this.albumService.remove(id);
+    //this.tracksService.clearAlbum(id);
   }
 }

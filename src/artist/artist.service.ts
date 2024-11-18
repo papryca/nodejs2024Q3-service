@@ -1,42 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { Artist } from './entities/artist.entity';
 import { v4 as uuid } from 'uuid';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ArtistService {
-  private artists = [];
+  constructor(private prisma: PrismaService) {}
   create(createArtistDto: CreateArtistDto) {
     const newArtist = { id: uuid(), ...createArtistDto };
-    this.artists.push(newArtist);
-    return newArtist;
+    return this.prisma.artist.create({
+      data: newArtist,
+    });
   }
 
   findAll() {
-    return this.artists;
+    return this.prisma.artist.findMany();
   }
-  findByIds(ids: string[]): Artist[] {
-    return this.artists.filter((artist) => ids.includes(artist.id));
+  findByIds(ids: string[]) {
+    return this.prisma.artist.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
   }
   findOne(id: string) {
-    return this.artists.find((artist) => artist.id === id);
+    return this.prisma.artist.findFirst({
+      where: {
+        id,
+      },
+    });
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    if (artistIndex === -1) return null;
-    this.artists[artistIndex] = {
-      ...this.artists[artistIndex],
-      ...updateArtistDto,
-    };
-    return this.artists[artistIndex];
+    return this.prisma.artist.update({
+      where: {
+        id,
+      },
+      data: updateArtistDto,
+    });
   }
 
   remove(id: string) {
-    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    if (artistIndex === -1) return null;
-    const deletedArtist = this.artists.splice(artistIndex, 1);
-    return deletedArtist[0];
+    return this.prisma.artist.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
