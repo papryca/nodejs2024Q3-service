@@ -6,19 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  private favorites = {
-    artists: [] as string[],
-    albums: [] as string[],
-    tracks: [] as string[],
-  };
-
   private readonly logger = new Logger('test');
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly artistService: ArtistService,
-    private readonly albumService: AlbumService,
-    private readonly trackService: TracksService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   async addTrackToFavorites(trackId: string) {
     const track = await this.prisma.track.findUnique({
       where: { id: trackId },
