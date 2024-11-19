@@ -1,0 +1,48 @@
+version: "3.11"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+    volumes:
+      - ./src:/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL_DOCKER}
+    env_file:
+      .env
+    depends_on:
+      - database
+    networks:
+      - library
+
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    env_file:
+          .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - log_data:/var/log/postgresql
+    ports:
+      - "5432:5432"
+    networks:
+      - library
+
+networks:
+  library:
+    driver: bridge
+
+volumes:
+  pg_data:
+  log_data:

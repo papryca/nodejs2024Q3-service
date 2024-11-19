@@ -66,7 +66,7 @@ export class TracksController {
     if (!track) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
-    return this.tracksService.update(id, updateTrackDto);
+    return await this.tracksService.update(id, updateTrackDto);
   }
 
   @Delete(':id')

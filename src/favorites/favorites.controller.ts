@@ -25,7 +25,7 @@ export class FavoritesController {
     )
     trackId: string,
   ) {
-    const trackAdded = this.favoritesService.addTrackToFavorites(trackId);
+    const trackAdded = await this.favoritesService.addTrackToFavorites(trackId);
     if (trackAdded === false) {
       throw new UnprocessableEntityException(
         `Track with id ${trackId} does not exist`,
@@ -52,7 +52,7 @@ export class FavoritesController {
     )
     trackId: string,
   ) {
-    const trackExists = this.favoritesService.removeTrackFromFavorites(trackId);
+    const trackExists = await this.favoritesService.removeTrackFromFavorites(trackId);
     if (trackExists === undefined) {
       throw new NotFoundException(
         `Track with id ${trackId} not found in favorites`,
@@ -70,7 +70,7 @@ export class FavoritesController {
     )
     albumId: string,
   ) {
-    const albumAdded = this.favoritesService.addAlbumToFavorites(albumId);
+    const albumAdded = await this.favoritesService.addAlbumToFavorites(albumId);
     if (albumAdded === false) {
       throw new UnprocessableEntityException(
         `Album with id ${albumId} does not exist`,
@@ -92,7 +92,7 @@ export class FavoritesController {
     )
     albumId: string,
   ) {
-    const album = this.favoritesService.removeAlbumFromFavorites(albumId);
+    const album = await this.favoritesService.removeAlbumFromFavorites(albumId);
     if (!album) {
       throw new NotFoundException(
         `Album with id ${albumId} not found in favorites`,
@@ -109,13 +109,13 @@ export class FavoritesController {
     )
     artistId: string,
   ) {
-    const artist = this.favoritesService.addArtistToFavorites(artistId);
+    const artist = await this.favoritesService.addArtistToFavorites(artistId);
     if (!artist) {
       throw new UnprocessableEntityException(
         `Artist with id ${artistId} does not exist`,
       );
     }
-    return;
+    return artist;
   }
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -126,7 +126,9 @@ export class FavoritesController {
     )
     artistId: string,
   ) {
-    const artist = this.favoritesService.removeArtistFromFavorites(artistId);
+    const artist = await this.favoritesService.removeArtistFromFavorites(
+      artistId,
+    );
     if (!artist) {
       throw new NotFoundException(
         `Artist with id ${artistId} not found in favorites`,

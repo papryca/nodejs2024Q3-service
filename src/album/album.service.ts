@@ -2,55 +2,64 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { v4 as uuid } from 'uuid';
+import { PrismaService } from '../prisma/prisma.service';
+
 @Injectable()
 export class AlbumService {
-  private albums = [];
+  constructor(private prisma: PrismaService) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
+  async create(createAlbumDto: CreateAlbumDto) {
     const newAlbum = {
       id: uuid(),
       ...createAlbumDto,
     };
-    this.albums.push(newAlbum);
+    await this.prisma.album.create({
+      data: newAlbum,
+    });
     return newAlbum;
   }
 
-  findAll() {
-    return this.albums;
+  async findAll() {
+    return await this.prisma.album.findMany();
   }
 
-  findOne(id: string) {
-    return this.albums.find((album) => album.id === id) || null;
+  async findOne(id: string) {
+    return this.prisma.album.findFirst({
+      where: { id },
+    });
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const albumIndex = this.albums.findIndex((album) => album.id === id);
-    if (albumIndex === -1) return null;
-
-    this.albums[albumIndex] = {
-      ...this.albums[albumIndex],
-      ...updateAlbumDto,
-    };
-    return this.albums[albumIndex];
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    return await this.prisma.album.update({
+      where: { id },
+      data: updateAlbumDto,
+    });
   }
 
-  remove(id: string) {
-    const albumIndex = this.albums.findIndex((album) => album.id === id);
-    if (albumIndex === -1) return null;
-
-    this.albums.splice(albumIndex, 1);
-    return true;
+  async remove(id: string) {
+    await this.prisma.album.delete({
+      where: { id },
+    });
   }
 
   findByIds(ids: string[]) {
-    return this.albums.filter((album) => ids.includes(album.id));
+    return this.prisma.album.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
   }
 
   clearArtist(artistId: string) {
-    for (const album of this.albums) {
-      if (album.artistId === artistId) {
-        album.artistId = null;
-      }
-    }
+    this.prisma.album.updateMany({
+      where: {
+        artistId: artistId,
+      },
+      data: {
+        artistId: null,
+      },
+    });
   }
 }
