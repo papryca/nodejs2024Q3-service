@@ -6,7 +6,6 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  private readonly logger = new Logger('test');
   constructor(private prisma: PrismaService) {}
   async create(createUserDto: CreateUserDto) {
     const now = new Date();
@@ -47,18 +46,7 @@ export class UsersService {
     return null;
   }
 
-  // update(id: string, updateUserDto: UpdateUserDto) {
-  //   const userIndex = this.users.findIndex((user) => user.id === id);
-  //   if (userIndex === -1) return null;
-  //   this.users[userIndex] = { ...this.users[userIndex], ...updateUserDto };
-  //   return this.users[userIndex];
-  // }
-
   async remove(id: string) {
-    // const userIndex = this.users.findIndex((user) => user.id === id);
-    // if (userIndex === -1) return null;
-    // const deletedUser = this.users.splice(userIndex, 1);
-    // return deletedUser[0];
     return await this.prisma.user.delete({
       where: { id },
     });
@@ -81,15 +69,6 @@ export class UsersService {
     }
 
     return false;
-    //
-    // const user = this.findOne(id);
-    // if (user && user.password === updatePasswordDto.oldPassword) {
-    //   user.password = updatePasswordDto.newPassword;
-    //   user.version = user.version + 1;
-    //   user.updatedAt = Date.now();
-    //   return true;
-    // }
-    // return false;
   }
 
   prepareUser(obj: {
